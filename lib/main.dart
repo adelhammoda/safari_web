@@ -45,7 +45,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
         
 
         home: Authentication.user?.uid==null?const LoginScreen():const Offices(),
