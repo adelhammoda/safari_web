@@ -1,0 +1,7 @@
+{
+  "rules": {
+    ".read": true,  // 2022-8-5
+    ".write": true,  // 2022-8-5
+   ".indexOn" : "user_id",
+  }
+}
