@@ -27,6 +27,7 @@ class DataBaseClintServer {
   ///get allTourist Office
   ///
   static Future<List<TouristOffice>?> getAllTouristOffice()async{
+    //
     return await FirebaseDatabase.instance.ref('tourist_office').get().then((value) {
       if (value.value != null && value.exists) {
         List<TouristOffice> tourist_office = [];
