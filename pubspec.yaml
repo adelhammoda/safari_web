@@ -40,6 +40,7 @@ dependencies:
   responsive_s:
   firebase_storage:
   image_picker:
+  fab_circular_menu: ^1.0.2
 
 dev_dependencies:
   flutter_test:
