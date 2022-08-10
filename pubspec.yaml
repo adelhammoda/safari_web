@@ -38,7 +38,8 @@ dependencies:
   firebase_database: 
   firebase_core:
   responsive_s:
-  firebase_storage: 
+  firebase_storage:
+  image_picker:
 
 dev_dependencies:
   flutter_test:
