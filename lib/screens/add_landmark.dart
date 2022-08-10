@@ -288,7 +288,7 @@ class _AddLandMarkState extends State<AddLandMark> {
                         ),
                         child: TextFormField(
                           controller: daytocontroller,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.text,
                           cursorColor: Color(0xffF5591F),
                           onFieldSubmitted: (value){
                             print(value);
