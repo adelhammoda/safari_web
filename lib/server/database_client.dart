@@ -617,8 +617,8 @@ class DataBaseClintServer {
         .then((value) {
       var res = value.value;
       if (res is Map) {
-        res.addAll({'id': userId});
-        res.addAll({'email': "$userId.com"});
+        res.addAll({'id': userId}as Map);
+        res.addAll({'email': "$userId.com"}as Map);
         return User.fromJson(res);
       } else {
         return null;

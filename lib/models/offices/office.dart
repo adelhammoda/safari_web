@@ -110,6 +110,22 @@ class Office implements OfficeBase {
     }
   }
 
+
+  Map<String, dynamic> toJson(){
+    return {
+      'country':comments,
+      'phone':phone,
+      'images':imagesPath,
+      'description':description,
+      'address':address,
+      'account':account,
+      'name':name,
+      'area':area,
+      'city':city,
+      "location":"$country/$city/$area"
+    };
+  }
+
   static Map<String,String> convertHashToMap(Map map){
     Map<String,String> res={};
     map.forEach((key, value) { 

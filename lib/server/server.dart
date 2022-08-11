@@ -1,21 +1,108 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:safari_web/models/offices/airplanes.dart';
+import 'package:safari_web/models/offices/hotel.dart';
+import 'package:safari_web/models/offices/tourist_office.dart';
+import 'package:safari_web/models/offices/transportion_office.dart';
 import 'package:safari_web/server/database_client.dart';
 
 import '../models/components/user.dart';
 import '../models/offices/office.dart';
-
-
-
-
-
+import '../models/offices/restaurant.dart';
 
 class Server {
+  ///get all owner offices
+  ///
+  static Future<List<Office>?> getAllOwnerOffice(String ownerEmail) async {
+    List<Office> offices = [];
+    print("airplanes");
+   await FirebaseDatabase.instance
+        .ref('airplanes')
+        .orderByChild('account')
+        .equalTo(ownerEmail)
+        .once()
+        .then((value) {
+          if(value.snapshot.exists && value.snapshot.value != null){
+            Map map = value.snapshot.value as Map;
+           map.forEach((key, value) {
+             Map json = value as Map;
+             json.addAll({'id':key} as Map);
+             offices.add(Airplanes.fromJson(json));
+           });
+          }
+    });
+    print("hotels");
+    await FirebaseDatabase.instance
+        .ref('hotels')
+        .orderByChild('account')
+        .equalTo(ownerEmail)
+        .once()
+        .then((value) {
+      if(value.snapshot.exists && value.snapshot.value != null){
+        Map map = value.snapshot.value as Map;
+        map.forEach((key, value) {
+          Map json = value as Map;
+          json.addAll({'id':key} as Map);
+          offices.add(Hotel.fromJson(json));
+        });
+      }
+    });
+    print("restaurant");
+    await FirebaseDatabase.instance
+        .ref('restaurant')
+        .orderByChild('account')
+        .equalTo(ownerEmail)
+        .once()
+        .then((value) {
+      if(value.snapshot.exists && value.snapshot.value != null){
+        Map map = value.snapshot.value as Map;
+        map.forEach((key, value) {
+          Map json = value as Map;
+          json.addAll({'id':key} as Map);
+          offices.add(Restaurant.fromJson(json));
+        });
+      }
+    });
+    print("tourist_office");
+    await FirebaseDatabase.instance
+        .ref('tourist_office')
+        .orderByChild('account')
+        .equalTo(ownerEmail)
+        .once()
+        .then((value) {
+      if(value.snapshot.exists && value.snapshot.value != null){
+        Map map = value.snapshot.value as Map;
+        map.forEach((key, value) {
+          Map json = value as Map;
+          json.addAll({'id':key} as Map);
+          offices.add(TouristOffice.fromJson(json));
+        });
+      }
+    });
+    print("transportation_office");
+    await FirebaseDatabase.instance
+        .ref('transportation_office')
+        .orderByChild('account')
+        .equalTo(ownerEmail)
+        .once()
+        .then((value) {
+      if(value.snapshot.exists && value.snapshot.value != null){
+        Map map = value.snapshot.value as Map;
+        map.forEach((key, value) {
+          Map json = value as Map;
+          json.addAll({'id':key} as Map);
+          offices.add(TransportationOffice.fromJson(json));
+        });
+      }
+    });
+    return offices;
+  }
+
   ///get all offices
   ///
   static Future<List<Office>?> getAllOffice() async {
     List<Office> offices = [];
     print('airpplanes');
-    offices.addAll( await DataBaseClintServer.getAllAirplanes() ?? []);
+    offices.addAll(await DataBaseClintServer.getAllAirplanes() ?? []);
     print('restaurant');
     offices.addAll(await DataBaseClintServer.getAllRestaurant() ?? []);
     print('hotels');
@@ -27,6 +114,7 @@ class Server {
     print(offices);
     return offices;
   }
+
   ///
   ///
   static Future updateUserVerification(String userId, bool value) {

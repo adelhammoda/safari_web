@@ -39,23 +39,28 @@ class OfficeWidget extends StatelessWidget {
               )
             ],
           ),
-          ValueListenableBuilder<bool>(
-            valueListenable: _deleting,
-            builder: (c,value,widget)=>value?const SizedBox(
-              width: 10,
-              height: 10,
-              child: Loader(),
-            ):widget!,
-            child: InkWell(
-              onTap:()async{
-                _deleting.value = true;
-                await onDelete.call();
-                _deleting.value = false;
+          Positioned(
+            top: 0,
+            left: 0,
+            child: SizedBox(
+              width: 15,
+              height: 15,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _deleting,
+                builder: (c,value,widget)=>value?const SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: Loader(),
+                ):widget!,
+                child: IconButton(
+                  icon:const Icon(Icons.delete),
+                  onPressed:()async{
+                    _deleting.value = true;
+                    await onDelete.call();
+                    _deleting.value = false;
 
-              },
-              child: const Align(
-                alignment: Alignment.topLeft,
-                child: Icon(Icons.delete),
+                  },
+                ),
               ),
             ),
           ),

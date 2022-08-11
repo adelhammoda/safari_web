@@ -4,7 +4,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:safari_web/models/components/booking.dart';
+import 'package:safari_web/models/components/car.dart';
+import 'package:safari_web/models/components/landmark.dart';
+import 'package:safari_web/models/components/room.dart';
 import 'package:safari_web/models/offices/hotel.dart';
+import 'package:safari_web/models/offices/office.dart';
+import '../models/components/flight.dart';
 import '../models/components/quastion.dart';
 import '../models/components/replay.dart';
 import '../models/components/tour.dart';
@@ -13,21 +18,33 @@ import '../models/components/offers.dart';
 
 class DataBaseServer {
 
+
+  ///add owner to user
+  ///
+  static Future<void> addOwnerToUser({
+    required String userId,
+  }) {
+    return FirebaseDatabase.instance.ref('users').child(userId).update({
+      "is_owner": true,
+    });
+  }
+
   ///delete office
   ///
   static Future<void> delete({
-  required String ref,
-}){
+    required String ref,
+  }) {
     return FirebaseDatabase.instance.ref(ref).remove();
   }
 
   ///booking
   ///
   ///
-  static Future<void> booking({
-  required Booking booking
-}){
-    return FirebaseDatabase.instance.ref('booking').push().set(booking.toJson());
+  static Future<void> booking({required Booking booking}) {
+    return FirebaseDatabase.instance
+        .ref('booking')
+        .push()
+        .set(booking.toJson());
   }
 
   ///to add question to the form that can have multi answers
@@ -50,6 +67,7 @@ class DataBaseServer {
         .push()
         .set(replay.toJson());
   }
+
   ///
   static Future<void> createUser(User user) async {
     return await FirebaseDatabase.instance
@@ -90,14 +108,12 @@ class DataBaseServer {
     });
   }
 
-
-
-
   ///add facility to hotel
-///
-  static Future<void> addFacility( String hotelId,List<String> facilities,Facility newFacility) async {
+  ///
+  static Future<void> addFacility(
+      String hotelId, List<String> facilities, Facility newFacility) async {
     DatabaseReference reference =
-    FirebaseDatabase.instance.ref('facilities').push();
+        FirebaseDatabase.instance.ref('facilities').push();
     await reference.set(newFacility.toJson());
     facilities.add(reference.path.split('/').last);
     await FirebaseDatabase.instance
@@ -105,4 +121,34 @@ class DataBaseServer {
         .child(hotelId)
         .update({'facilities': facilities});
   }
+
+  ///
+  static Future<void> addOffice(Office office, String ref) =>
+      FirebaseDatabase.instance.ref(ref).push().set(office.toJson());
+
+  ///
+  static Future<void> updateOffice(Office office, String ref) =>
+      FirebaseDatabase.instance
+          .ref(ref)
+          .child(office.id)
+          .update(office.toJson());
+
+  ///to add flight
+  ///
+  static Future<void> addFlight(Flight flight) =>
+      FirebaseDatabase.instance.ref('flights').push().set(flight.toJson());
+
+  ///to add room
+  ///
+  static Future<void> addRoom(Room flight) =>
+      FirebaseDatabase.instance.ref('rooms').push().set(flight.toJson());
+
+  ///to add car
+///
+  static Future<void> addCar(Car flight) =>
+      FirebaseDatabase.instance.ref('cars').push().set(flight.toJson());
+  ///to add car
+  ///
+  static Future<void> addLandMark(Landmark landmark) =>
+      FirebaseDatabase.instance.ref('landmarks').push().set(landmark.toJson());
 }

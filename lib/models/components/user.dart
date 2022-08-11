@@ -1,6 +1,6 @@
 class User {
   String  name, phoneNumber, email, photoUrl;
-  bool isVerification,isOwner;
+  bool isVerification,isOwner,isAdmin;
 
   User({
     required this.name,
@@ -8,13 +8,15 @@ class User {
     required this.email,
     required this.photoUrl,
     required this.isOwner,
+    required this.isAdmin,
     required this.isVerification,
   });
 
   factory User.fromJson(Map json) {
     return User(
         name: json['name'],
-        isOwner: json['isOwner']??false,
+        isAdmin: json['is_admin']??false,
+        isOwner: json['is_owner']??false,
         isVerification: json['is_Verification']??false,
         email: json['email'],
         phoneNumber: json['phone_number'],

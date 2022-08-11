@@ -34,7 +34,7 @@ class Flight {
         relax: convertToDouble(json['relax'] ?? 0));
   }
 
-  Map<String, dynamic> joJson() {
+  Map<String, dynamic> toJson() {
     return {
       'from': from,
       'to': to,
@@ -70,3 +70,4 @@ class Flight {
     }
   }
 }
+

@@ -30,7 +30,7 @@ class Room {
         roomType: json['room_type']);
   }
 
-  Map<String ,dynamic> joJson(){
+  Map<String ,dynamic> toJson(){
     return{
       'size':size,
       'cost':costPerDay,

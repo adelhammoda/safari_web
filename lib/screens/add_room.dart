@@ -11,28 +11,28 @@ import 'package:safari_web/models/offices/airplanes.dart';
 import 'package:safari_web/server/database_client.dart';
 import 'package:safari_web/server/database_server.dart';
 
+import '../models/components/room.dart';
+import '../models/offices/hotel.dart';
 import '../widgets/form_field.dart';
 import '../widgets/loader.dart';
 import '../widgets/slider.dart';
 
-class AddFlight extends StatefulWidget {
-  final Airplanes airplaneId;
+class AddRoom extends StatefulWidget {
+  final Hotel hotel;
 
-  const AddFlight({Key? key, required this.airplaneId}) : super(key: key);
+  const AddRoom({Key? key, required this.hotel}) : super(key: key);
 
   @override
-  State<AddFlight> createState() => _AddFlightState();
+  State<AddRoom> createState() => _AddRoomState();
 }
 
-class _AddFlightState extends State<AddFlight> {
+class _AddRoomState extends State<AddRoom> {
   double? height, width;
 
-  var fromcontroller = TextEditingController();
-  var tocontroller = TextEditingController();
-  var costcontroller = TextEditingController();
-  var relaxcontroller = TextEditingController();
-  var numberOfPassengerscontroller = TextEditingController();
-  var passengersCapacitycontroller = TextEditingController();
+  var costPerDay = TextEditingController();
+  var roomNumber = TextEditingController();
+  var roomType = TextEditingController();
+  var roomSize = TextEditingController();
 
   DateTimeRange dateTimeRange = DateTimeRange(
       start: DateTime.now(), end: (DateTime.now()).add(new Duration(days: 7)));
@@ -64,20 +64,16 @@ class _AddFlightState extends State<AddFlight> {
     if (formKey.currentState!.validate()) {
       try {
         _loading.value = true;
-        Flight flight = Flight(
-            to: tocontroller.text,
+        Room room = Room(
             id: '',
-            relax: double.tryParse(relaxcontroller.text) ?? 0.0,
-            from: fromcontroller.text,
-            dateFrom: dateTimeRange.start,
-            dateTo: dateTimeRange.end,
-            cost: double.tryParse(costcontroller.text) ?? 0.0,
-            numberOfPassengers:
-                int.tryParse(numberOfPassengerscontroller.text) ?? 0,
-            passengersCapacity:
-                int.tryParse(passengersCapacitycontroller.text) ?? 0);
-        await DataBaseServer.addFlight(flight);
-        await DataBaseServer.updateOffice(widget.airplaneId, 'airplanes');
+            size: double.tryParse(roomSize.text) ?? 0,
+            roomType: roomType.text,
+            roomNumber: int.tryParse(roomNumber.text)??0,
+            reservedUnitl: dateTimeRange.end,
+            reservedFrom: dateTimeRange.start,
+            costPerDay: double.tryParse(costPerDay.text) ?? 0);
+        await DataBaseServer.addRoom(room);
+        await DataBaseServer.updateOffice(widget.hotel, 'hotels');
         _loading.value = false;
       } on Exception catch (e) {
         _loading.value = false;
@@ -183,7 +179,7 @@ class _AddFlightState extends State<AddFlight> {
                                 ],
                               ),
                               child: TextFormField(
-                                controller: fromcontroller,
+                                controller: costPerDay,
                                 keyboardType: TextInputType.text,
                                 cursorColor: Color(0xffF5591F),
                                 onFieldSubmitted: (value) {
@@ -193,50 +189,8 @@ class _AddFlightState extends State<AddFlight> {
                                   if (value!.isEmpty) {
                                     return "from must not be empty"; //S.of(context).pageEmailAddress;
                                   }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  // icon: Icon(
-                                  //   Icons.timer,
-                                  //   color: Color(0xffef9b0f),
-                                  // ),
-                                  hintText: "from ",
-                                  //S.of(context).pageEnterEmail,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 0,
-                            ),
-
-                            Container(
-                              alignment: Alignment.center,
-                              margin:
-                                  EdgeInsets.only(left: 20, right: 20, top: 20),
-                              padding: EdgeInsets.only(left: 20, right: 20),
-                              height: 54,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey[200],
-                                boxShadow: [
-                                  BoxShadow(
-                                      offset: Offset(0, 10),
-                                      blurRadius: 50,
-                                      color: Color(0xffEEEEEE)),
-                                ],
-                              ),
-                              child: TextFormField(
-                                controller: tocontroller,
-                                keyboardType: TextInputType.text,
-                                cursorColor: Color(0xffF5591F),
-                                onFieldSubmitted: (value) {
-                                  print(value);
-                                },
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "to must not be empty"; //S.of(context).pageEmailAddress;
+                                  if ((num.tryParse(value)) == null) {
+                                    return "Only number is allowed";
                                   }
                                   return null;
                                 },
@@ -245,16 +199,14 @@ class _AddFlightState extends State<AddFlight> {
                                   //   Icons.timer,
                                   //   color: Color(0xffef9b0f),
                                   // ),
-                                  hintText: "to",
+                                  hintText: "Cost Per Dey ",
                                   //S.of(context).pageEnterEmail,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 0,
-                            ),
+
 
                             Container(
                               alignment: Alignment.center,
@@ -273,52 +225,7 @@ class _AddFlightState extends State<AddFlight> {
                                 ],
                               ),
                               child: TextFormField(
-                                controller: costcontroller,
-                                keyboardType: TextInputType.number,
-                                cursorColor: Color(0xffF5591F),
-                                onFieldSubmitted: (value) {
-                                  print(value);
-                                },
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "cost must not be empty"; //S.of(context).pageEmailAddress;
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  // icon: Icon(
-                                  //   Icons.timer,
-                                  //   color: Color(0xffef9b0f),
-                                  // ),
-                                  hintText: "cost ",
-                                  //S.of(context).pageEnterEmail,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 0,
-                            ),
-
-                            Container(
-                              alignment: Alignment.center,
-                              margin:
-                                  EdgeInsets.only(left: 20, right: 20, top: 20),
-                              padding: EdgeInsets.only(left: 20, right: 20),
-                              height: 54,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey[200],
-                                boxShadow: [
-                                  BoxShadow(
-                                      offset: Offset(0, 10),
-                                      blurRadius: 50,
-                                      color: Color(0xffEEEEEE)),
-                                ],
-                              ),
-                              child: TextFormField(
-                                controller: numberOfPassengerscontroller,
+                                controller: roomType,
                                 keyboardType: TextInputType.number,
                                 cursorColor: Color(0xffF5591F),
                                 onFieldSubmitted: (value) {
@@ -335,12 +242,15 @@ class _AddFlightState extends State<AddFlight> {
                                   //   Icons.door_back_door,
                                   //   color: Color(0xffef9b0f),
                                   // ),
-                                  hintText: " number Of Passengers",
+                                  hintText: " room type",
                                   //S.of(context).pageEnterEmail,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
                                 ),
                               ),
+                            ),
+                            SizedBox(
+                              height: 0,
                             ),
                             SizedBox(
                               height: 0,
@@ -363,52 +273,7 @@ class _AddFlightState extends State<AddFlight> {
                                 ],
                               ),
                               child: TextFormField(
-                                controller: passengersCapacitycontroller,
-                                keyboardType: TextInputType.number,
-                                cursorColor: Color(0xffF5591F),
-                                onFieldSubmitted: (value) {
-                                  print(value);
-                                },
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "passengersCapacity must not be empty"; //S.of(context).pageEmailAddress;
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  // icon: Icon(
-                                  //   Icons.door_back_door,
-                                  //   color: Color(0xffef9b0f),
-                                  // ),
-                                  hintText: "passengers Capacity ",
-                                  //S.of(context).pageEnterEmail,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 0,
-                            ),
-
-                            Container(
-                              alignment: Alignment.center,
-                              margin:
-                                  EdgeInsets.only(left: 20, right: 20, top: 20),
-                              padding: EdgeInsets.only(left: 20, right: 20),
-                              height: 54,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: Colors.grey[200],
-                                boxShadow: [
-                                  BoxShadow(
-                                      offset: Offset(0, 10),
-                                      blurRadius: 50,
-                                      color: Color(0xffEEEEEE)),
-                                ],
-                              ),
-                              child: TextFormField(
-                                controller: relaxcontroller,
+                                controller: roomNumber,
                                 keyboardType: TextInputType.number,
                                 cursorColor: Color(0xffF5591F),
                                 onFieldSubmitted: (value) {
@@ -425,7 +290,7 @@ class _AddFlightState extends State<AddFlight> {
                                   //   Icons.door_back_door,
                                   //   color: Color(0xffef9b0f),
                                   // ),
-                                  hintText: "relax ",
+                                  hintText: "room number ",
                                   //S.of(context).pageEnterEmail,
                                   enabledBorder: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -513,37 +378,41 @@ class _AddFlightState extends State<AddFlight> {
                             ),
                             ValueListenableBuilder<bool>(
                                 valueListenable: _loading,
-                                builder: (c, value, child) =>
-                                    value ? const Loader() : Container(
-                                      margin:
-                                      EdgeInsets.only(left: 20, right: 20, top: 10),
-                                      padding: EdgeInsets.only(left: 20, right: 20),
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            colors: [
-                                              (new Color(0xffef9b0f)),
-                                              new Color(0xffffba00)
-                                            ],
-                                            begin: Alignment.centerLeft,
-                                            end: Alignment.centerRight),
-                                        borderRadius: BorderRadius.circular(50),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                              offset: Offset(0, 10),
-                                              blurRadius: 50,
-                                              color: Color(0xffEEEEEE)),
-                                        ],
-                                      ),
-                                      //width: double.infinity,
-                                      child: MaterialButton(
-                                        onPressed: _addFlight,
-                                        child: Text(
-                                          "ADD Flight",
-                                          style: TextStyle(color: Colors.white),
+                                builder: (c, value, child) => value
+                                    ? const Loader()
+                                    : Container(
+                                        margin: EdgeInsets.only(
+                                            left: 20, right: 20, top: 10),
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              colors: [
+                                                (new Color(0xffef9b0f)),
+                                                new Color(0xffffba00)
+                                              ],
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                                offset: Offset(0, 10),
+                                                blurRadius: 50,
+                                                color: Color(0xffEEEEEE)),
+                                          ],
                                         ),
-                                      ),
-                                    )),
+                                        //width: double.infinity,
+                                        child: MaterialButton(
+                                          onPressed: _addFlight,
+                                          child: Text(
+                                            "ADD Flight",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      )),
                             SizedBox(
                               height: 25,
                             ),
@@ -574,4 +443,7 @@ class _AddFlightState extends State<AddFlight> {
       Chosen = true;
     });
   }
+
+
+
 }
